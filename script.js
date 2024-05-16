@@ -30,6 +30,9 @@ let animationSpeed = 0;
 let AnimationVelocity = [1, 1, 0];
 let ShowPath = false;
 let rotateValue = 0;
+let planeModel;
+const planeXYZs = [-1, -1, 0, 1, 1, 0, 1, -1, 0, 1, 1, 0, -1, -1, 0, -1, 1, 0]
+const planeUVs = [1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0]
 
 function SwitchAnimation() {
 
@@ -229,9 +232,10 @@ function CalculateCorrugatedSpherePoint(phi, v) {
 
 
 /* Initialize the WebGL context. Called from init() */
+let textureSurface;
 function initGL() {
 
-    LoadTexture();
+    textureSurface = LoadTexture();
 
     gl.enable(gl.DEPTH_TEST);
     gl.enable(gl.CULL_FACE);
@@ -271,6 +275,9 @@ function BuildLine() {
 }
 
 function BuildSurface() {
+    planeModel = new Model('Plane');
+    planeModel.BufferData(planeXYZs, planeXYZs);
+    planeModel.TextureBufferData(planeUVs);
     surface = new Model('Surface');
     let data = CreateSurfaceData();
     surface.BufferData(data[0], data[1]);
@@ -406,5 +413,6 @@ function LoadTexture() {
 
         draw()
     }
+    return texture;
 }
 

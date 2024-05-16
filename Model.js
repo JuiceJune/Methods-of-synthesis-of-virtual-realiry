@@ -32,7 +32,7 @@ function Model(name) {
         this.countTexture = textureCoords.length / 2;
     }
 
-    this.Draw = function (projectionMatrix, viewMatrix) {
+    this.Draw = function (projectionMatrix, viewMatrix, background=false) {
 
         /*  the view matrix from the SimpleRotator object.*/
         let rotation = spaceball.getViewMatrix();
@@ -48,6 +48,9 @@ function Model(name) {
         var worldInverseMatrix = m4.inverse(modelMatrix);
         var worldInverseTransposeMatrix = m4.transpose(worldInverseMatrix);
         gl.uniformMatrix4fv(shProgram.iModelViewProjectionMatrix, false, modelViewProjection);
+        if(background){
+            gl.uniformMatrix4fv(shProgram.iModelViewProjectionMatrix, false, m4.identity());
+        }
         gl.uniformMatrix4fv(shProgram.iWorldInverseTranspose, false, worldInverseTransposeMatrix);
 
         gl.uniform3fv(shProgram.iMatAmbientColor, AmbientColor);
@@ -64,7 +67,7 @@ function Model(name) {
 
         gl.uniform2fv(shProgram.iRotationPoint, texturePoint);
 
-        let point = CalculateCorrugatedSpherePoint(map(texturePoint[0], 0, 1,phiMin, phiMax), map(texturePoint[1], 0, 1,vMin, vMax));
+        let point = CalculateCorrugatedSpherePoint(map(texturePoint[0], 0, 1, phiMin, phiMax), map(texturePoint[1], 0, 1, vMin, vMax));
         gl.uniform3fv(shProgram.iPointVizualizationPosition, [point.x, point.y, point.z]);
         gl.uniform1f(shProgram.iRotationValue, rotateValue);
 
@@ -82,6 +85,10 @@ function Model(name) {
         gl.enableVertexAttribArray(shProgram.iTextureCoords2D);
         gl.uniform1i(shProgram.iTexture, 0);
 
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.count);
+    }
+    this.DrawPlane = function () {
+        gl.uniformMatrix4fv(shProgram.iModelViewProjectionMatrix, false, m4.identity());
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.count);
     }
 }

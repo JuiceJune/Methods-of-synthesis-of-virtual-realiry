@@ -18,6 +18,18 @@ function draw() {
     }
 
     shProgram.Use()
+    gl.bindTexture(gl.TEXTURE_2D, textureVideo);
+    gl.texImage2D(
+        gl.TEXTURE_2D,
+        0,
+        gl.RGBA,
+        gl.RGBA,
+        gl.UNSIGNED_BYTE,
+        video
+    );
+    planeModel.Draw(stereoC.mProjectionMatrix, stereoC.mModelViewMatrix, true);
+    gl.bindTexture(gl.TEXTURE_2D, textureSurface);
+    gl.clear(gl.DEPTH_BUFFER_BIT);
     stereoC.ApplyLeftFrustum();
     gl.colorMask(true, false, false, false);
     surface.Draw(stereoC.mProjectionMatrix, stereoC.mModelViewMatrix);
@@ -32,8 +44,11 @@ function draw() {
  * initialization function that will be called when the page has loaded
  */
 let stereoC;
+let video;
+let textureVideo;
 function init() {
     stereoC = new StereoCamera(10, 1, 1, 30, 1, 40);
+    video = CreateVideo();
     let canvas;
     try {
         canvas = document.getElementById("webglcanvas");
@@ -49,6 +64,7 @@ function init() {
     }
     try {
         initGL();  // initialize the WebGL graphics context
+        textureVideo = CreateWebcamTexture();
     }
     catch (e) {
         document.getElementById("canvas-holder").innerHTML =
@@ -66,8 +82,13 @@ function init() {
         document.getElementById("scale").value = +scale.toFixed(1);
         document.getElementById("scale_text").innerHTML = +scale.toFixed(1);
         draw();
+        playVideo()
         return false;
     };
+    // playVideo()
+}
 
-    //draw();
+function playVideo() {
+    draw();
+    window.requestAnimationFrame(playVideo);
 }
