@@ -32,7 +32,7 @@ function Model(name) {
         this.countTexture = textureCoords.length / 2;
     }
 
-    this.Draw = function (projectionMatrix, viewMatrix, background=false) {
+    this.Draw = function (projectionMatrix, viewMatrix, background = false, sphereGeom = false) {
 
         /*  the view matrix from the SimpleRotator object.*/
         let rotation = spaceball.getViewMatrix();
@@ -48,7 +48,7 @@ function Model(name) {
         var worldInverseMatrix = m4.inverse(modelMatrix);
         var worldInverseTransposeMatrix = m4.transpose(worldInverseMatrix);
         gl.uniformMatrix4fv(shProgram.iModelViewProjectionMatrix, false, modelViewProjection);
-        if(background){
+        if (background) {
             gl.uniformMatrix4fv(shProgram.iModelViewProjectionMatrix, false, m4.identity());
         }
         gl.uniformMatrix4fv(shProgram.iWorldInverseTranspose, false, worldInverseTransposeMatrix);
@@ -84,7 +84,10 @@ function Model(name) {
         gl.vertexAttribPointer(shProgram.iTextureCoords2D, 2, gl.FLOAT, false, 0, 0);
         gl.enableVertexAttribArray(shProgram.iTextureCoords2D);
         gl.uniform1i(shProgram.iTexture, 0);
-
+        if (sphereGeom) {
+            modelViewProjection = m4.multiply(projectionMatrix, viewMatrix);
+            gl.uniformMatrix4fv(shProgram.iModelViewProjectionMatrix, false, modelViewProjection);
+        }
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, this.count);
     }
     this.DrawPlane = function () {

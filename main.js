@@ -30,6 +30,10 @@ function draw() {
     planeModel.Draw(stereoC.mProjectionMatrix, stereoC.mModelViewMatrix, true);
     gl.bindTexture(gl.TEXTURE_2D, textureSurface);
     gl.clear(gl.DEPTH_BUFFER_BIT);
+    sphereGeom.Draw(m4.identity(), m4.translation(0.85 * Math.sin(Date.now() * 0.001), 0.85 * Math.cos(Date.now() * 0.001), 0), false, true);
+    if (spatialAudio) {
+        spatialAudio.setPosition(0.85 * Math.sin(Date.now() * 0.001), 0.85 * Math.cos(Date.now() * 0.001), 0);
+    }
     stereoC.ApplyLeftFrustum();
     gl.colorMask(true, false, false, false);
     surface.Draw(stereoC.mProjectionMatrix, stereoC.mModelViewMatrix);
@@ -47,6 +51,8 @@ let stereoC;
 let video;
 let textureVideo;
 function init() {
+    presetAudio();
+    initAudio();
     stereoC = new StereoCamera(10, 1, 1, 30, 1, 40);
     video = CreateVideo();
     let canvas;

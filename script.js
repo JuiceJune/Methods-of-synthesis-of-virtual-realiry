@@ -33,6 +33,7 @@ let rotateValue = 0;
 let planeModel;
 const planeXYZs = [-1, -1, 0, 1, 1, 0, 1, -1, 0, 1, 1, 0, -1, -1, 0, -1, 1, 0]
 const planeUVs = [1, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 0]
+let sphereGeom;
 
 function SwitchAnimation() {
 
@@ -282,6 +283,9 @@ function BuildSurface() {
     let data = CreateSurfaceData();
     surface.BufferData(data[0], data[1]);
     surface.TextureBufferData(data[2]);
+    sphereGeom = new Model('Sphere');
+    sphereGeom.BufferData(CreateSphere(0.1), CreateSphere(0.1));
+    sphereGeom.TextureBufferData(new Array(CreateSphere(0.1).length).fill(0));
 }
 
 function SetupSurface() {
